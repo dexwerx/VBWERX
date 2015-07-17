@@ -56,9 +56,9 @@ Public Function Bind(ByVal ArrayPtr As Long, _
     If Count > 1 And ElementSize <= 0 Then Err.Raise 5, TypeName(Me), "ElementSize must be > 0 if Count is > 1."
     If PEEKD(ArrayPtr) Then Err.Raise 5, TypeName(Me), "Can't bind to an already Dimensioned Array."
     If BaseAddress Then InternalArr.pvData = BaseAddress
-    If BaseIndex > 0 Then InternalArr.rgsabound(0).lLbound = BaseIndex
-    If Count > 0 Then InternalArr.rgsabound(0).cElements = Count
-    If ElementSize > 0 Then InternalArr.cbElements = ElementSize
+    If BaseIndex >= 0 Then InternalArr.rgsabound(0).lLbound = BaseIndex
+    If Count >= 0 Then InternalArr.rgsabound(0).cElements = Count
+    If ElementSize >= 0 Then InternalArr.cbElements = ElementSize
     PutMem4 ArrayPtr, VarPtr(InternalArr)
     ExternalPtr = ArrayPtr
     Set Bind = Me
