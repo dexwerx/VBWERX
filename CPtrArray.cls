@@ -37,7 +37,7 @@ Private Type SAFEARRAY
 End Type
 
 Private Declare Sub PutMem4 Lib "msvbvm60" (ByVal Dst As Long, ByVal Src As Long)
-Private Declare Sub GetMem4 Lib "msvbvm60" (ByVal Src As Any, ByRef Dst As Long)
+Private Declare Sub GetMem4 Lib "msvbvm60" (ByVal Src As Long, ByRef Dst As Long)
 
 Private InternalArr As SAFEARRAY
 Private ExternalPtr As Long
