@@ -1,7 +1,7 @@
 Attribute VB_Name = "MCollection"
 ' Copyright © 2015 Dexter Freivald. All Rights Reserved. DEXWERX.COM
 '
-' MCollection.cls
+' MCollection.bas
 '
 ' Collection Helper routines
 '   - Get Collection Keys() Array
