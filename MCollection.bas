@@ -1,21 +1,21 @@
 Attribute VB_Name = "MCollection"
 ' Copyright © 2015 Dexter Freivald. All Rights Reserved. DEXWERX.COM
 '
-' MCollection.bas
+' MCollection.cls
 '
 ' Collection Helper routines
 '   - Get Collection Keys() Array
 '   - Key Exists() function
 '   - Coll() equivelent to Array()
 '   - IsColl() equivelent to IsArray()
+'   - Merge() appends Collection (does not preserve
 '
 Option Explicit
 
-Private Declare Sub SetArrPtr Lib "msvbvm60" Alias "PutMem4" (Arr() As Any, SA As SAFEARRAY1D)
-Private Declare Sub ClearArrPtr Lib "msvbvm60" Alias "PutMem4" (Arr() As Any, Optional ByVal NullPtr As Long)
+Private Declare Sub PutMem4 Lib "msvbvm60" (Dst() As Any, Src As Any)
 
 Private Type VBCOLLECTION
-    pVTbl       As Long
+    pVTable     As Long
     Unk0        As Long
     Unk1        As Long
     Unk2        As Long
@@ -48,17 +48,17 @@ Public Function Keys(Col As Collection) As Variant()
     Dim ColItemSA       As SAFEARRAY1D
     Dim ColItem()       As VBCOLLECTIONITEM
     If Col.Count = 0 Then Exit Function
-    ColItemSA.cDims = 1
-    ColItemSA.cElements = 1
     ColInternalSA.cDims = 1
     ColInternalSA.cElements = 1
-    SetArrPtr ColInternal, ColInternalSA
-    SetArrPtr ColItem, ColItemSA
     ColInternalSA.pvData = ObjPtr(Col)
+    PutMem4 ColInternal, ColInternalSA
     ReDim RetKeys(0 To ColInternal(0).Count - 1) As Variant
+    ColItemSA.cDims = 1
+    ColItemSA.cElements = 1
     ColItemSA.pvData = ColInternal(0).First
+    PutMem4 ColItem, ColItemSA
     Dim ItemIndex As Long
-    For ItemIndex = LBound(RetKeys) To UBound(RetKeys)
+    For ItemIndex = 0 To ColInternal(0).Count - 1
         If StrPtr(ColItem(0).Key) Then
             RetKeys(ItemIndex) = ColItem(0).Key
         Else
@@ -66,8 +66,8 @@ Public Function Keys(Col As Collection) As Variant()
         End If
         ColItemSA.pvData = ColItem(0).Next
     Next
-    ClearArrPtr ColInternal
-    ClearArrPtr ColItem
+    PutMem4 ColInternal, ByVal 0&
+    PutMem4 ColItem, ByVal 0&
     Keys = RetKeys
 End Function
 
@@ -92,3 +92,14 @@ On Error Resume Next
     Err.Clear
 End Function
 
+Public Sub Merge(Dst As Collection, Src As Collection)
+    If Src.Count = 0 Then Exit Sub
+    Dim Key As Variant
+    For Each Key In Keys(Src)
+        Select Case VarType(Key)
+        Case vbLong:    Dst.Add Src.Item(Key) 'Ignores Indexes
+        Case vbString:  If Exists(Key, Dst) Then Dst.Remove Key
+                        Dst.Add Src.Item(Key), Key
+        End Select
+    Next
+End Sub
