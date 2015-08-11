@@ -52,13 +52,13 @@ Public Function Keys(Col As Collection) As Variant()
     ColInternalSA.cElements = 1
     ColInternalSA.pvData = ObjPtr(Col)
     PutMem4 ColInternal, ColInternalSA
-    ReDim RetKeys(0 To ColInternal(0).Count - 1) As Variant
+    ReDim RetKeys(1 To ColInternal(0).Count) As Variant
     ColItemSA.cDims = 1
     ColItemSA.cElements = 1
     ColItemSA.pvData = ColInternal(0).First
     PutMem4 ColItem, ColItemSA
     Dim ItemIndex As Long
-    For ItemIndex = 0 To ColInternal(0).Count - 1
+    For ItemIndex = 1 To ColInternal(0).Count
         If StrPtr(ColItem(0).Key) Then
             RetKeys(ItemIndex) = ColItem(0).Key
         Else
