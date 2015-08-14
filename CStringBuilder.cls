@@ -225,7 +225,7 @@ Public Function Replace(OldValue As String, _
                           (m_Length - (Found - 1)) * 2 - LenB(OldValue)
             If LenB(NewValue) > 0 Then RtlMoveMemory StrPtrFound, StrPtr(NewValue), LenB(NewValue)
             m_Length = m_Length + Expand
-            Found = InStr(StartIndex + Found + Len(OldValue), m_Buffer, OldValue, vbBinaryCompare)
+            Found = InStr(Found + Len(OldValue), m_Buffer, OldValue, vbBinaryCompare)
         Loop
     End If
     Set Replace = Me
