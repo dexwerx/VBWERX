@@ -176,7 +176,17 @@ Public Function Insert(ByVal Index As Long, ByRef Value As String, Optional ByVa
         EnsureCapacity m_Length + Len(Value) * Count
         Dim StrPtrIndex As Long
         StrPtrIndex = StrPtr(m_Buffer) + Index * 2
+#If False Then
+        'Overlapped Copies are very expensive...
         RtlMoveMemory StrPtrIndex + LenB(Value) * Count, StrPtrIndex, (m_Length - Index) * 2
+#Else
+        'It's actually 2-3x faster to make a full copy and combine...
+        Dim BufferCopy As String
+        BufferCopy = ToString
+        Dim StrPtrIndexCopy As Long
+        StrPtrIndexCopy = StrPtr(BufferCopy) + Index * 2
+        RtlMoveMemory StrPtrIndex + LenB(Value) * Count, StrPtrIndexCopy, (m_Length - Index) * 2
+#End If        
         m_Length = m_Length + Len(Value) * Count
         Do Until Count = 0
             RtlMoveMemory StrPtrIndex + LenB(Value) * (Count - 1), StrPtr(Value), LenB(Value)
