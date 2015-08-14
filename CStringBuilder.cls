@@ -217,7 +217,7 @@ Public Function Replace(OldValue As String, _
     If Count > 0 And StrComp(OldValue, NewValue, vbBinaryCompare) <> 0 Then
         Dim Found As Long, StrPtrFound As Long, Expand As Long
         Found = InStr(StartIndex + 1, m_Buffer, OldValue, vbBinaryCompare)
-        Do While Found > 0 And Found - 1 + Len(OldValue) <= m_Length
+        Do While Found > 0 And Found - 1 + Len(OldValue) <= Count
             Expand = Len(NewValue) - Len(OldValue)
             If Expand > 0 Then EnsureCapacity m_Length + Expand
             StrPtrFound = StrPtr(m_Buffer) + (Found - 1) * 2
