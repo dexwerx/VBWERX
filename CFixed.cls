@@ -16,6 +16,7 @@ Attribute VB_Exposed = False
 ' CFixed.cls
 '
 ' Access Memory as an Array
+'   - Dependancy: VBXCore.tlb
 '   - Points a locked VB SAFEARRAY to arbitrary Memory locations
 '   - to pass in ppsa use VBXCore.ArrPtr() or VarPtrArray/VarPtrStringArray
 '   - Implemented as a class for RAII
