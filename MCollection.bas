@@ -1,73 +1,55 @@
-Attribute VB_Name = "MCollection"
 ' Copyright © 2015 Dexter Freivald. All Rights Reserved. DEXWERX.COM
 '
-' MCollection.cls
+' MCollection.bas
 '
 ' Collection Helper routines
+'   - Dependancy CFixed.cls, VBXCore.tlb
 '   - Get Collection Keys() Array
-'   - Key Exists() function
+'   - KeyExists() function
 '   - Coll() equivelent to Array()
 '   - IsColl() equivelent to IsArray()
-'   - Merge() appends Collection (does not preserve
+'   - Merge() appends Collection (does not preserve Indexes)
+'   - Clone()
 '
 Option Explicit
 
-Private Declare Sub PutMem4 Lib "msvbvm60" (Dst() As Any, Src As Any)
-
 Private Type VBCOLLECTION
-    pVTable     As Long
-    Unk0        As Long
-    Unk1        As Long
-    Unk2        As Long
-    Count       As Long
-    Unk3        As Long
-    First       As Long
-    Last        As Long
+    pVTable As Long
+    Unk0    As Long
+    Unk1    As Long
+    Unk2    As Long
+    Count   As Long
+    Unk3    As Long
+    First   As Long
+    Last    As Long
 End Type
- 
 Private Type VBCOLLECTIONITEM
-    Data        As Variant
-    Key         As String
-    Prev        As Long
-    Next        As Long
-End Type
-
-Private Type SAFEARRAY1D
-    cDims       As Integer
-    fFeatures   As Integer
-    cbElements  As Long
-    cLocks      As Long
-    pvData      As Long
-    cElements   As Long
-    lLbound     As Long
+    Data    As Variant
+    Key     As String   '+16
+    Prev    As Long     '+20
+    Next    As Long     '+24
 End Type
 
 Public Function Keys(Col As Collection) As Variant()
-    Dim ColInternalSA   As SAFEARRAY1D
-    Dim ColInternal()   As VBCOLLECTION
-    Dim ColItemSA       As SAFEARRAY1D
-    Dim ColItem()       As VBCOLLECTIONITEM
     If Col.Count = 0 Then Exit Function
-    ColInternalSA.cDims = 1
-    ColInternalSA.cElements = 1
-    ColInternalSA.pvData = ObjPtr(Col)
-    PutMem4 ColInternal, ColInternalSA
-    ReDim RetKeys(1 To ColInternal(0).Count) As Variant
-    ColItemSA.cDims = 1
-    ColItemSA.cElements = 1
-    ColItemSA.pvData = ColInternal(0).First
-    PutMem4 ColItem, ColItemSA
-    Dim ItemIndex As Long
-    For ItemIndex = 1 To ColInternal(0).Count
-        If StrPtr(ColItem(0).Key) Then
-            RetKeys(ItemIndex) = ColItem(0).Key
-        Else
-            RetKeys(ItemIndex) = ItemIndex
-        End If
-        ColItemSA.pvData = ColItem(0).Next
-    Next
-    PutMem4 ColInternal, ByVal 0&
-    PutMem4 ColItem, ByVal 0&
+    Dim ColInternal As VBCOLLECTION
+    CopyMemory ColInternal, ByVal ObjPtr(Col), LenB(ColInternal)
+    ReDim RetKeys(1 To ColInternal.Count) As Variant
+    Dim ColItem() As VBCOLLECTIONITEM
+    'With New CFixed: Call .Init(ArrPtr(ColItem), ColInternal.First)
+    With New CFixed: Call .Init(ArrPtr(ColItem), ColInternal.First)
+        Dim Ptr As Long
+        Ptr = ColInternal.First
+        Dim ItemIndex As Long
+        For ItemIndex = 1 To ColInternal.Count
+            If (StrPtr(ColItem(0).Key)) Then
+                RetKeys(ItemIndex) = ColItem(0).Key
+            Else
+                RetKeys(ItemIndex) = ItemIndex
+            End If
+            .Addr = ColItem(0).Next
+        Next
+    End With
     Keys = RetKeys
 End Function
 
@@ -82,13 +64,14 @@ End Function
 
 Public Function IsColl(VarName As Variant) As Boolean
     If VarName Is Nothing Then Exit Function
+    If Not IsObject(VarName) Then Exit Function
     IsColl = TypeOf VarName Is Collection
 End Function
 
-Public Function Exists(Key As Variant, InCol As Collection) As Boolean
+Public Function ContainsKey(Col As Collection, Key As Variant) As Boolean
 On Error Resume Next
-    InCol.Item Key
-    Exists = (Err.Number = 0)
+    Col.Item Key
+    ContainsKey = (Err.Number = 0&)
     Err.Clear
 End Function
 
@@ -98,8 +81,19 @@ Public Sub Merge(Dst As Collection, Src As Collection)
     For Each Key In Keys(Src)
         Select Case VarType(Key)
         Case vbLong:    Dst.Add Src.Item(Key) 'Ignores Indexes
-        Case vbString:  If Exists(Key, Dst) Then Dst.Remove Key
+        Case vbString:  If ContainsKey(Dst, Key) Then Dst.Remove Key
                         Dst.Add Src.Item(Key), Key
         End Select
     Next
 End Sub
+
+Public Function Clone(Src As Collection) As Collection
+    If Src Is Nothing Then Exit Function
+    Set Clone = New Collection
+    Dim Key, Keys()
+    Keys = MCollection.Keys(Src)
+    For Each Key In Keys
+        Clone.Add Src.Item(Key), Key
+    Next
+End Function
+
