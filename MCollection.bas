@@ -36,10 +36,7 @@ Public Function Keys(Col As Collection) As Variant()
     CopyMemory ColInternal, ByVal ObjPtr(Col), LenB(ColInternal)
     ReDim RetKeys(1 To ColInternal.Count) As Variant
     Dim ColItem() As VBCOLLECTIONITEM
-    'With New CFixed: Call .Init(ArrPtr(ColItem), ColInternal.First)
     With New CFixed: Call .Init(ArrPtr(ColItem), ColInternal.First)
-        Dim Ptr As Long
-        Ptr = ColInternal.First
         Dim ItemIndex As Long
         For ItemIndex = 1 To ColInternal.Count
             If (StrPtr(ColItem(0).Key)) Then
