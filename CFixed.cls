@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 ' CFixed.cls
 '
 ' Access Memory as an Array
-'   - Dependancy: VBXCore.tlb
+'   - Dependancies: VBXCore.tlb
 '   - Points a locked VB SAFEARRAY to arbitrary Memory locations
 '   - to pass in ppsa use VBXCore.ArrPtr() or VarPtrArray/VarPtrStringArray
 '   - Implemented as a class for RAII
@@ -25,6 +25,8 @@ Option Explicit
 
 'Private Declare Function VarPtrArray Lib "msvbvm60" Alias "VarPtr" (Arr() As Any) As Long
 'Private Declare Function VarPtrStringArray Lib "msvbvm60" Alias "__vbaRefVarAry" (ByRef StringArray As Variant) As Long
+'Private Declare Function GetMem4 Lib "msvbvm60" (Src As Any, Dst As Any) As Long
+'Private Const NULL_ As Long = 0&
 
 Private Type SAFEARRAY1D
     cDims           As Integer
@@ -55,7 +57,8 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
-    If m_ppsa Then DeRef(m_ppsa) = vbNullPtr
+    If m_ppsa Then _
+      DeRef(m_ppsa) = NULL_
 End Sub
 
 Public Property Let Addr(Value As Long)
@@ -66,17 +69,24 @@ Public Property Get Addr() As Long
     Addr = m_sa.pvData
 End Property
 
-Private Function UAdd(ByVal Ptr As Long, ByVal Offset As Long) As Long
-    UAdd = (Ptr Xor &H80000000) + Offset Xor &H80000000
-End Function
+'Public Sub Inc(Optional Count As Long = 1)
+'    If Count = 1 Then m_sa.pvData = UAdd(m_sa.pvData, m_sa.cbElements): Exit Sub
+'    m_sa.pvData = UAdd(m_sa.pvData, m_sa.cbElements * Count)
+'End Sub
+'
+'Public Sub Dec(Optional Count As Long = 1)
+'    If Count = 1 Then m_sa.pvData = UAdd(m_sa.pvData, -m_sa.cbElements): Exit Sub
+'    m_sa.pvData = UAdd(m_sa.pvData, -m_sa.cbElements * Count)
+'End Sub
 
-Public Sub Inc(Optional Count As Long = 1)
-    If Count = 1 Then m_sa.pvData = UAdd(m_sa.pvData, m_sa.cbElements): Exit Sub
-    m_sa.pvData = UAdd(m_sa.pvData, m_sa.cbElements * Count)
-End Sub
-
-Public Sub Dec(Optional Count As Long = 1)
-    If Count = 1 Then m_sa.pvData = UAdd(m_sa.pvData, -m_sa.cbElements): Exit Sub
-    m_sa.pvData = UAdd(m_sa.pvData, -m_sa.cbElements * Count)
-End Sub
-
+'Private Property Get DeRef(Ptr As Long) As Long
+'    Call GetMem4(ByVal Ptr, DeRef)
+'End Property
+'
+'Private Property Let DeRef(Ptr As Long, Value As Long)
+'    Call GetMem4(ByVal Ptr, Value)
+'End Property
+'
+'Private Function UAdd(ByVal Ptr As Long, ByVal Offset As Long) As Long
+'    UAdd = (Ptr Xor &H80000000) + Offset Xor &H80000000
+'End Function
