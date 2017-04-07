@@ -1,8 +1,8 @@
 # VBWERX
-VB6 and VBA Library
-
-- MCollection.bas - Collection Helper routines
+VB6 Library
+- VB6.tlb - Visual Basic Advanced Extensions Typelib (required for all projects, missing Keywords/Functions/Interfaces)
 - AryMap.cls - Point an Array to any Memory Address
-- Stringbuilder.cls - .NET StringBuilder class
+- MCollection.bas - Collection Helper routines
+- Stringbuilder.cls - StringBuilder class
 - MMultiForm.bas      - Open Multiple Copies of the same form in MS Access
 - MStartup.bas        - VB6 Sub Main() for use with all new VB6 Projects.
