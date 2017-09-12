@@ -11,7 +11,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
-' Dual (IDispatch) based Interface used during debugging is different than IUnknown Interface in VB6.tlb
+' Dual (IDispatch) based Interface has different IID than VB6.tlb / VBSubclass.dll
+' This interface is only needed when not referencing either VB6.tlb / VBSubclass.dll
 Option Explicit
 Public Function SubclassProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
 End Function
