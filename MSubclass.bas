@@ -4,11 +4,11 @@ Attribute VB_Name = "MSubclass"
 ' MSubclass.bas
 '
 ' Subclassing Routines
-'   - Dependancies: ISubclass.cls
+'   - Dependencies: ISubclass.cls or VB6.tlb
 '   - Adapted from HookXP by Karl E. Peterson - http://vb.mvps.org/samples/HookXP/
-'   - No SetProp/GetProp Bugs like SubTimer.dll(McKinney), SSubTmr6.dll(McMahon)
-'   - No DEP issues or Assembly Thunks PushParamThunk(Curland) / SelfSub(Caton)
-'   - No UserObject leaks, by using a single Callback to forward
+'   - No SetProp/GetProp bugs per SubTimer.dll(McKinney), SSubTmr6.dll(McMahon)
+'   - No DEP issues or assembly thunks per PushParamThunk(Curland), SelfSub(Caton)
+'   - No UserObject leaks, by using a single callback to forward
 '       http://stackoverflow.com/questions/1120337/setwindowsubclass-is-leaking-user-objects
 '
 Option Explicit
@@ -31,9 +31,9 @@ Private Function SubclassProc(ByVal hWnd As Long, _
                               ByVal lParam As Long, _
                               ByVal uIdSubclass As ISubclass, _
                               ByVal dwRefData As Long) As Long
-                              
+
     Const WM_NCDESTROY As Long = &H82&
-    
+
     If uMsg = WM_NCDESTROY Then
         RemoveSubclass hWnd, uIdSubclass
         SubclassProc = DefSubclassProc(hWnd, uMsg, wParam, lParam)

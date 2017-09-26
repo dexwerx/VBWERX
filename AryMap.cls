@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 ' AryMap.cls
 '
 ' Access Arbitrary Memory locations using a Dynamic Array
-'   - Dependancies: VB6.tlb
+'   - Dependencies: VB6.tlb
 '   - allows VB to use pointers comparable in speed to C/C++
 '   - PreDeclared Global Class, Default method is Bind()
 '   - Use BasePtr property to change where the Array Points
@@ -79,7 +79,7 @@ Attribute Bind.VB_UserMemId = 0
         Err.Raise 5, "AryMap.Bind()", _
             "Can't set ElementCount > 1 without setting ElementSize > 0."
     End If
-    
+
     If AryMap Is Me Then        ' this is the Predeclared instance
         Set Bind = New AryMap
         Bind.Bind ArrayVarPtr, BasePtr, ElementSize, ElementCount, LowerBound

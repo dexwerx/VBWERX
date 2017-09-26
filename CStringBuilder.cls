@@ -11,7 +11,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-' Copyright Â© 2014 Dexter Freivald. All Rights Reserved. DEXWERX.COM
+' Copyright © 2017 Dexter Freivald. All Rights Reserved. DEXWERX.COM
 '
 ' CStringBuilder.cls
 '
@@ -134,7 +134,7 @@ End Function
 Public Function AppendLine(Optional ByRef Value As String = vbNullString) As CStringBuilder
     Set AppendLine = Append(Value & vbNewLine)
 End Function
- 
+
 Public Function Clear() As CStringBuilder
     m_Length = 0
     Set Clear = Me
@@ -186,7 +186,7 @@ Public Function Insert(ByVal Index As Long, ByRef Value As String, Optional ByVa
         Dim StrPtrIndexCopy As Long
         StrPtrIndexCopy = StrPtr(BufferCopy) + Index * 2
         RtlMoveMemory StrPtrIndex + LenB(Value) * Count, StrPtrIndexCopy, (m_Length - Index) * 2
-#End If        
+#End If
         m_Length = m_Length + Len(Value) * Count
         Do Until Count = 0
             RtlMoveMemory StrPtrIndex + LenB(Value) * (Count - 1), StrPtr(Value), LenB(Value)

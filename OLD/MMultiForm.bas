@@ -1,5 +1,5 @@
 Attribute VB_Name = "MMultiForm"
-' Copyright Â© 2015 Dexter Freivald. All Rights Reserved. DEXWERX.COM
+' Copyright © 2015 Dexter Freivald. All Rights Reserved. DEXWERX.COM
 '
 ' MMultiForm.bas
 '
@@ -38,21 +38,21 @@ Function OpenFormMulti(NewForm As Form, _
         .Visible = True
         .SetFocus
     End With
-    
+
     If Cascade And MultiForms.Count > 1 And IsZoomed(NewForm.hWnd) = 0 And IsIconic(NewForm.hWnd) = 0 Then
         With MultiForms(MultiForms.Count - 1)
             NewForm.Move .WindowLeft + CASCADEX, .WindowTop + CASCADEY
         End With
     End If
-    
+
     Set OpenFormMulti = NewForm
 End Function
 
 Function CloseFormMulti(CloseForm As Form) As Boolean
     Dim CurForm As Object
-    
+
     If CloseForm Is Nothing Then Exit Function
-    
+
     For Each CurForm In MultiForms
         If CurForm.hWnd = CloseForm.hWnd Then
             MultiForms.Remove CStr(CloseForm.hWnd)
@@ -65,7 +65,7 @@ End Function
 
 Function CloseAllFormMulti(Optional FormTypeName As String)
     Dim CurForm As Object
-    
+
     For Each CurForm In MultiForms
         If Len(FormTypeName) = 0 Then
             MultiForms.Remove CStr(CurForm.hWnd)
