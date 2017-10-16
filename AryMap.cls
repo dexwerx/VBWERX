@@ -84,6 +84,7 @@ Attribute Bind.VB_UserMemId = 0
         Set Bind = New AryMap
         Bind.Bind ArrayVarPtr, BasePtr, ElementSize, ElementCount, LowerBound
     Else
+        Dispose                 ' Make sure we clean up previous mapping
         Set Bind = Me
         m_sa.cbElements = ElementSize
         m_sa.rgsabound(0).cElements = ElementCount
